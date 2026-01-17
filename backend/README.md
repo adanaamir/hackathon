@@ -1,4 +1,4 @@
-# SpeakSmart Backend
+# StutterLess Backend
 
 AI-powered speech rehearsal assistant backend with Supabase authentication and Python ML analysis.
 
