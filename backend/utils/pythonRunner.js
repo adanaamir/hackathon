@@ -29,18 +29,30 @@ const runPythonScript = (scriptName, args = []) => {
 
         // Handle process completion
         pythonProcess.on('close', (code) => {
+            console.log(`[${scriptName}] Process exited with code ${code}`);
+            console.log(`[${scriptName}] STDOUT:`, stdout);
+            if (stderr) console.log(`[${scriptName}] STDERR:`, stderr);
+
             if (code !== 0) {
                 console.error(`Python script ${scriptName} error:`, stderr);
-                return reject(new Error(`Python script failed with code ${code}: ${stderr}`));
+                return reject(new Error(`${scriptName} failed with code ${code}: ${stderr}`));
             }
 
             try {
                 // Parse JSON output
                 const result = JSON.parse(stdout);
+                console.log(`[${scriptName}] Parsed result:`, result);
+
+                // Check if the Python script returned an error
+                if (result.success === false) {
+                    console.error(`[${scriptName}] Script returned error:`, result.error);
+                    return reject(new Error(`${scriptName}: ${result.error}`));
+                }
+
                 resolve(result);
             } catch (error) {
                 console.error(`Failed to parse Python output from ${scriptName}:`, stdout);
-                reject(new Error(`Invalid JSON output from Python script: ${error.message}`));
+                reject(new Error(`Invalid JSON output from ${scriptName}: ${error.message}`));
             }
         });
 
@@ -60,12 +72,27 @@ const runPythonScript = (scriptName, args = []) => {
  */
 const runFullAnalysis = async (audioFilePath, transcription) => {
     try {
-        // Run all analyses in parallel
+        // Helper function to run analysis with fallback
+        const runWithFallback = async (scriptName, args, defaultScore = 50) => {
+            try {
+                const result = await runPythonScript(scriptName, args);
+                return result;
+            } catch (error) {
+                console.error(`[${scriptName}] Failed, using default values:`, error.message);
+                return {
+                    success: true,
+                    score: defaultScore,
+                    feedback: `Analysis could not be completed. ${error.message}`
+                };
+            }
+        };
+
+        // Run all analyses in parallel with fallbacks
         const [fluencyResult, paceResult, toneResult, confidenceResult] = await Promise.all([
-            runPythonScript('fluency_analysis', [transcription]),
-            runPythonScript('pace_analysis', [audioFilePath, transcription]),
-            runPythonScript('tone_analysis', [audioFilePath]),
-            runPythonScript('confidence_analysis', [audioFilePath, transcription])
+            runWithFallback('fluency_analysis', [transcription], 50),
+            runWithFallback('pace_analysis', [audioFilePath, transcription], 50),
+            runWithFallback('tone_analysis', [audioFilePath], 50),
+            runWithFallback('confidence_analysis', [audioFilePath, transcription], 50)
         ]);
 
         // Calculate overall score (weighted average)

@@ -33,7 +33,7 @@ app.use((req, res, next) => {
 app.get('/health', (req, res) => {
     res.json({
         success: true,
-        message: 'SpeakSmart API is running',
+        message: 'StutterLess API is running',
         timestamp: new Date().toISOString()
     });
 });
@@ -68,7 +68,7 @@ const startServer = async () => {
 
         app.listen(PORT, () => {
             console.log('=================================');
-            console.log(`🚀 SpeakSmart Backend Server`);
+            console.log(`🚀 StutterLess Backend Server`);
             console.log(`📡 Running on port ${PORT}`);
             console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
             console.log(`⏰ Started at: ${new Date().toISOString()}`);

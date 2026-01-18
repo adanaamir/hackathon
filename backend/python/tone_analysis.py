@@ -79,12 +79,12 @@ def analyze_tone(audio_file_path):
         
         return {
             "success": True,
-            "score": round(tone_score),
-            "pitchVariation": round(cv_pitch, 2),
-            "energyVariation": round(cv_energy, 2),
-            "isMonotone": is_monotone,
-            "meanPitch": round(mean_pitch, 2),
-            "pitchRange": round(pitch_range, 2),
+            "score": int(round(tone_score)),
+            "pitchVariation": float(round(cv_pitch, 2)),
+            "energyVariation": float(round(cv_energy, 2)),
+            "isMonotone": bool(is_monotone),
+            "meanPitch": float(round(mean_pitch, 2)),
+            "pitchRange": float(round(pitch_range, 2)),
             "feedback": feedback
         }
         

@@ -1,4 +1,4 @@
-# SpeakSmart Backend - Quick Start Guide
+# StutterLess Backend - Quick Start Guide
 
 ## ✅ Installation Complete!
 
@@ -55,7 +55,7 @@ Server will start on: **http://localhost:5000**
 You should see:
 ```
 ✓ Supabase connected successfully
-🚀 SpeakSmart Backend Server
+🚀 StutterLess Backend Server
 📡 Running on port 5000
 ```
 
@@ -70,7 +70,7 @@ Should return:
 ```json
 {
   "success": true,
-  "message": "SpeakSmart API is running",
+  "message": "StutterLess API is running",
   "timestamp": "..."
 }
 ```

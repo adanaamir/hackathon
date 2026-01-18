@@ -1,4 +1,4 @@
-# SpeakSmart API Testing Guide
+# StutterLess API Testing Guide
 
 ## Quick Test Using PowerShell
 
@@ -165,9 +165,9 @@ Invoke-RestMethod -Uri "http://localhost:5000/api/speech/history?limit=10" -Meth
 Save this as `test-api.ps1`:
 
 ```powershell
-# SpeakSmart API Test Script
+# StutterLess API Test Script
 
-Write-Host "=== SpeakSmart API Testing ===" -ForegroundColor Cyan
+Write-Host "=== StutterLess API Testing ===" -ForegroundColor Cyan
 
 # 1. Register User
 Write-Host "`n1. Registering new user..." -ForegroundColor Yellow

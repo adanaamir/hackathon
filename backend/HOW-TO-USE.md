@@ -1,4 +1,4 @@
-# 🎯 How to Test Your SpeakSmart Backend
+# 🎯 How to Test Your StutterLess Backend
 
 Your backend is **RUNNING** on `http://localhost:5000` ✅
 
@@ -123,7 +123,7 @@ Invoke-RestMethod -Uri "http://localhost:5000/api/speech/history" -Method GET -H
 ### Option B: Postman
 
 1. Download Postman
-2. Create new collection "SpeakSmart"
+2. Create new collection "StutterLess"
 3. Add requests for each endpoint
 4. Use Bearer Token authentication
 

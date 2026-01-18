@@ -141,28 +141,28 @@ const API = {
 // Token Management
 const TokenManager = {
     save(token) {
-        localStorage.setItem('speaksmart_token', token);
+        localStorage.setItem('stutterless_token', token);
     },
 
     get() {
-        return localStorage.getItem('speaksmart_token');
+        return localStorage.getItem('stutterless_token');
     },
 
     remove() {
-        localStorage.removeItem('speaksmart_token');
+        localStorage.removeItem('stutterless_token');
     },
 
     saveUser(user) {
-        localStorage.setItem('speaksmart_user', JSON.stringify(user));
+        localStorage.setItem('stutterless_user', JSON.stringify(user));
     },
 
     getUser() {
-        const user = localStorage.getItem('speaksmart_user');
+        const user = localStorage.getItem('stutterless_user');
         return user ? JSON.parse(user) : null;
     },
 
     removeUser() {
-        localStorage.removeItem('speaksmart_user');
+        localStorage.removeItem('stutterless_user');
     },
 
     clear() {
