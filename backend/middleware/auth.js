@@ -1,4 +1,5 @@
 const { supabase } = require('../config/supabase');
+const { createClient } = require('@supabase/supabase-js');
 
 /**
  * Authentication middleware to protect routes
@@ -31,6 +32,20 @@ const authenticateUser = async (req, res, next) => {
         // Attach user to request object
         req.user = user;
         req.token = token;
+
+        // Create a user-specific Supabase client with the user's token
+        // This ensures RLS policies work correctly
+        req.supabase = createClient(
+            process.env.SUPABASE_URL,
+            process.env.SUPABASE_ANON_KEY,
+            {
+                global: {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            }
+        );
 
         next();
     } catch (error) {

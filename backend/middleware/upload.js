@@ -32,17 +32,18 @@ const fileFilter = (req, file, cb) => {
         'audio/x-wav',     // wav alternative
         'audio/webm',      // webm
         'audio/ogg',       // ogg
-        'audio/mp4',       // m4a
+        'audio/mp4',       // m4a, mp4
         'audio/x-m4a',     // m4a alternative
+        'video/mp4',       // mp4 (often detected as video)
     ];
 
-    const allowedExtensions = ['.mp3', '.wav', '.webm', '.ogg', '.m4a'];
+    const allowedExtensions = ['.mp3', '.wav', '.webm', '.ogg', '.m4a', '.mp4'];
     const ext = path.extname(file.originalname).toLowerCase();
 
     if (allowedMimeTypes.includes(file.mimetype) || allowedExtensions.includes(ext)) {
         cb(null, true);
     } else {
-        cb(new Error('Invalid file type. Only audio files are allowed (mp3, wav, webm, ogg, m4a)'));
+        cb(new Error('Invalid file type. Only audio files are allowed (mp3, wav, webm, ogg, m4a, mp4)'));
     }
 };
 

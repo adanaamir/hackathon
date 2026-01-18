@@ -25,8 +25,8 @@ const uploadSpeech = async (req, res) => {
             });
         }
 
-        // Create speech session in database
-        const { data: session, error: dbError } = await supabase
+        // Create speech session in database using user-specific client
+        const { data: session, error: dbError } = await req.supabase
             .from('speech_sessions')
             .insert({
                 id: uuidv4(),
@@ -85,7 +85,7 @@ const analyzeSpeech = async (req, res) => {
         }
 
         // Get speech session
-        const { data: session, error: sessionError } = await supabase
+        const { data: session, error: sessionError } = await req.supabase
             .from('speech_sessions')
             .select('*')
             .eq('id', sessionId)
@@ -100,7 +100,7 @@ const analyzeSpeech = async (req, res) => {
         }
 
         // Check if already analyzed
-        const { data: existingAnalysis } = await supabase
+        const { data: existingAnalysis } = await req.supabase
             .from('analysis_results')
             .select('*')
             .eq('session_id', sessionId)
@@ -128,7 +128,7 @@ const analyzeSpeech = async (req, res) => {
         const transcription = transcriptionResult.transcription;
 
         // Update session with transcription
-        await supabase
+        await req.supabase
             .from('speech_sessions')
             .update({ transcription })
             .eq('id', sessionId);
@@ -137,7 +137,7 @@ const analyzeSpeech = async (req, res) => {
         const analysisResults = await runFullAnalysis(session.audio_file_path, transcription);
 
         // Step 3: Save analysis results
-        const { data: analysis, error: analysisError } = await supabase
+        const { data: analysis, error: analysisError } = await req.supabase
             .from('analysis_results')
             .insert({
                 id: uuidv4(),
@@ -194,7 +194,7 @@ const getSpeechHistory = async (req, res) => {
         const { limit = 10, offset = 0 } = req.query;
 
         // Get sessions with their analysis results
-        const { data: sessions, error } = await supabase
+        const { data: sessions, error } = await req.supabase
             .from('speech_sessions')
             .select(`
         id,
@@ -246,7 +246,7 @@ const getAnalysisById = async (req, res) => {
         const { id } = req.params;
 
         // Get session with analysis
-        const { data: session, error: sessionError } = await supabase
+        const { data: session, error: sessionError } = await req.supabase
             .from('speech_sessions')
             .select(`
         *,
@@ -290,7 +290,7 @@ const deleteSpeech = async (req, res) => {
         const { id } = req.params;
 
         // Get session to verify ownership and get file path
-        const { data: session, error: sessionError } = await supabase
+        const { data: session, error: sessionError } = await req.supabase
             .from('speech_sessions')
             .select('audio_file_path')
             .eq('id', id)
@@ -305,7 +305,7 @@ const deleteSpeech = async (req, res) => {
         }
 
         // Delete from database (cascade will delete analysis_results)
-        const { error: deleteError } = await supabase
+        const { error: deleteError } = await req.supabase
             .from('speech_sessions')
             .delete()
             .eq('id', id);

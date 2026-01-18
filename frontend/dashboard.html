@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - SpeakSmart</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-content">
+            <div class="nav-left">
+                <h2>🎤 SpeakSmart</h2>
+            </div>
+            <div class="nav-right">
+                <span class="user-name" id="userName">Loading...</span>
+                <button class="logout-btn" id="logoutBtn">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Upload Section -->
+            <div class="card upload-card">
+                <h3>📁 Upload Speech Audio</h3>
+                <p class="card-subtitle">Upload an audio file to analyze your speech</p>
+
+                <div class="upload-area" id="uploadArea">
+                    <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        <polyline points="17 8 12 3 7 8" />
+                        <line x1="12" y1="3" x2="12" y2="15" />
+                    </svg>
+                    <p>Click to upload or drag and drop</p>
+                    <small>MP3, WAV, WebM, OGG, MP4, M4A (Max 50MB)</small>
+                    <input type="file" id="audioFile" accept="audio/*" hidden>
+                </div>
+
+                <div class="file-info" id="fileInfo" style="display: none;">
+                    <div class="file-details">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M9 18V5l12-2v13" />
+                            <circle cx="6" cy="18" r="3" />
+                            <circle cx="18" cy="16" r="3" />
+                        </svg>
+                        <div>
+                            <p class="file-name" id="fileName"></p>
+                            <small id="fileSize"></small>
+                        </div>
+                    </div>
+                    <button class="remove-file-btn" id="removeFile">✕</button>
+                </div>
+
+                <div class="form-group">
+                    <label for="speechContext">Speech Context</label>
+                    <input type="text" id="speechContext" placeholder="e.g., Practice presentation about AI" required>
+                </div>
+
+                <button class="primary-btn" id="uploadBtn" disabled>
+                    <span>Upload & Analyze</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <polyline points="9 11 12 14 22 4" />
+                        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Analysis Results -->
+            <div class="card results-card" id="resultsCard" style="display: none;">
+                <h3>📊 Analysis Results</h3>
+
+                <!-- Overall Score -->
+                <div class="overall-score">
+                    <div class="score-circle">
+                        <canvas id="overallScoreChart" width="150" height="150"></canvas>
+                        <div class="score-text">
+                            <span class="score-value" id="overallScore">0</span>
+                            <span class="score-label">Overall</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Individual Scores -->
+                <div class="scores-grid">
+                    <div class="score-item">
+                        <div class="score-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                <polyline points="14 2 14 8 20 8" />
+                                <line x1="16" y1="13" x2="8" y2="13" />
+                                <line x1="16" y1="17" x2="8" y2="17" />
+                                <polyline points="10 9 9 9 8 9" />
+                            </svg>
+                        </div>
+                        <div class="score-details">
+                            <span class="score-name">Fluency</span>
+                            <span class="score-value-small" id="fluencyScore">0</span>
+                        </div>
+                        <div class="score-bar">
+                            <div class="score-bar-fill" id="fluencyBar" style="width: 0%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="score-item">
+                        <div class="score-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white">
+                                <circle cx="12" cy="12" r="10" />
+                                <polyline points="12 6 12 12 16 14" />
+                            </svg>
+                        </div>
+                        <div class="score-details">
+                            <span class="score-name">Pace</span>
+                            <span class="score-value-small" id="paceScore">0</span>
+                        </div>
+                        <div class="score-bar">
+                            <div class="score-bar-fill" id="paceBar"
+                                style="width: 0%; background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);"></div>
+                        </div>
+                        <small class="wpm-text" id="wpmText"></small>
+                    </div>
+
+                    <div class="score-item">
+                        <div class="score-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white">
+                                <path d="M9 18V5l12-2v13" />
+                                <circle cx="6" cy="18" r="3" />
+                                <circle cx="18" cy="16" r="3" />
+                            </svg>
+                        </div>
+                        <div class="score-details">
+                            <span class="score-name">Tone</span>
+                            <span class="score-value-small" id="toneScore">0</span>
+                        </div>
+                        <div class="score-bar">
+                            <div class="score-bar-fill" id="toneBar"
+                                style="width: 0%; background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);"></div>
+                        </div>
+                    </div>
+
+                    <div class="score-item">
+                        <div class="score-icon" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                                <polyline points="22 4 12 14.01 9 11.01" />
+                            </svg>
+                        </div>
+                        <div class="score-details">
+                            <span class="score-name">Confidence</span>
+                            <span class="score-value-small" id="confidenceScore">0</span>
+                        </div>
+                        <div class="score-bar">
+                            <div class="score-bar-fill" id="confidenceBar"
+                                style="width: 0%; background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%);"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Transcription -->
+                <div class="transcription-section">
+                    <h4>📝 Transcription</h4>
+                    <div class="transcription-box" id="transcriptionText">
+                        Your speech transcription will appear here...
+                    </div>
+                </div>
+
+                <!-- Feedback -->
+                <div class="feedback-section">
+                    <h4>💡 Feedback & Suggestions</h4>
+                    <div class="feedback-item">
+                        <strong>Fluency:</strong>
+                        <p id="fluencyFeedback">-</p>
+                    </div>
+                    <div class="feedback-item">
+                        <strong>Pace:</strong>
+                        <p id="paceFeedback">-</p>
+                    </div>
+                    <div class="feedback-item">
+                        <strong>Tone:</strong>
+                        <p id="toneFeedback">-</p>
+                    </div>
+                    <div class="feedback-item">
+                        <strong>Confidence:</strong>
+                        <p id="confidenceFeedback">-</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loading State -->
+            <div class="card loading-card" id="loadingCard" style="display: none;">
+                <div class="loading-content">
+                    <div class="spinner-large"></div>
+                    <h3>Analyzing Your Speech...</h3>
+                    <p id="loadingStatus">Uploading audio file...</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="card history-card">
+                <h3>📜 Recent Analyses</h3>
+                <div class="history-list" id="historyList">
+                    <p class="empty-state">No analyses yet. Upload your first speech!</p>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+
+</html>
