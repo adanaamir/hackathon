@@ -87,13 +87,12 @@ const runFullAnalysis = async (audioFilePath, transcription) => {
             }
         };
 
-        // Run all analyses in parallel with fallbacks
-        const [fluencyResult, paceResult, toneResult, confidenceResult] = await Promise.all([
-            runWithFallback('fluency_analysis', [transcription], 50),
-            runWithFallback('pace_analysis', [audioFilePath, transcription], 50),
-            runWithFallback('tone_analysis', [audioFilePath], 50),
-            runWithFallback('confidence_analysis', [audioFilePath, transcription], 50)
-        ]);
+        // Run analyses SEQUENTIALLY to reduce memory usage (Render free tier has 512MB limit)
+        // Running in parallel causes memory overflow with librosa
+        const fluencyResult = await runWithFallback('fluency_analysis', [transcription], 50);
+        const paceResult = await runWithFallback('pace_analysis', [audioFilePath, transcription], 50);
+        const toneResult = await runWithFallback('tone_analysis', [audioFilePath], 50);
+        const confidenceResult = await runWithFallback('confidence_analysis', [audioFilePath, transcription], 50);
 
         // Calculate overall score (weighted average)
         const overallScore = Math.round(
